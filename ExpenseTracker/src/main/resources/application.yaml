@@ -1,0 +1,21 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dimeDiligence
+    username: postgres
+    password: pg_password123
+    driver-class-name: org.postgresql.Driver
+    # Flyway configuration
+    flyway:
+      enabled: true
+      baseline-on-migrate: true
+      locations:
+        - db/migration
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          google:
+#            client-id: 89221936678-96rfvd8k8io5450a83saji1o67t8qjoh.apps.googleusercontent.com
+#            client-secret: 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

@@ -1,0 +1,257 @@
+openapi: 3.0.3
+info:
+  title: Financial API
+  version: 1.0.0
+servers:
+  - url: api/v1
+paths:
+  /income:
+    get:
+      summary: Get all income records
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncomeDto'
+    post:
+      summary: Create a new income record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncomeDto'
+      responses:
+        '201':
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncomeDto'
+  /income/{id}:
+    get:
+      summary: Get an income record by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncomeDto'
+        '404':
+          description: Income record not found
+    put:
+      summary: Update an income record by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncomeDto'
+      responses:
+        '200':
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncomeDto'
+        '404':
+          description: Income record not found
+    delete:
+      summary: Delete an income record by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Successfully deleted
+  /expense:
+    get:
+      summary: Get all expense records
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseDto'
+    post:
+      summary: Create a new expense record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseDto'
+      responses:
+        '201':
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseDto'
+  /expense/{id}:
+    get:
+      summary: Get an expense record by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseDto'
+        '404':
+          description: Expense record not found
+    put:
+      summary: Update an expense record by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseDto'
+      responses:
+        '200':
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseDto'
+        '404':
+          description: Expense record not found
+    delete:
+      summary: Delete an expense record by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Successfully deleted
+components:
+  schemas:
+    IncomeDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        ownerId:
+          type: integer
+          format: int64
+        amount:
+          type: string  # Represent as a string in OpenAPI to allow for BigDecimal
+          format: decimal
+        currency:
+          type: string
+        date:
+          type: string
+          format: date
+        incomeCategory:
+          $ref: '#/components/schemas/IncomeCategoryDto'
+    ExpenseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        ownerId:
+          type: integer
+          format: int64
+        amount:
+          type: number  # Represent as a string in OpenAPI to allow for BigDecimal
+          format: bigdecimal
+        currency:
+          type: string
+        date:
+          type: string
+          format: date
+        description:
+          type: string
+        place:
+          type: string
+        comment:
+          type: string
+        category:
+          $ref: '#/components/schemas/ExpenseCategoryDto'
+    IncomeCategoryDto:
+      type: string
+      enum:
+        - Salary
+        - Rent
+    ExpenseCategoryDto:
+      type: string
+      enum:
+        - Drinks
+        - Food
+        - Groceries
+        - Travel
+        - Bills
+        - Credit
+        - Shopping
+    SavingDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        ownerId:
+          type: integer
+          format: int64
+        amount:
+          type: string  # Represent as a string in OpenAPI to allow for BigDecimal
+          format: decimal
+        currency:
+          type: string
+        date:
+          type: string
+          format: date
