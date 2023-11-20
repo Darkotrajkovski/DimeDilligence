@@ -9,6 +9,8 @@ public enum ExpenseCategory {
 
   DRINKS("Drinks"),
 
+  COFFEE("COFFEE"),
+
   FOOD("Food"),
 
   GROCERIES("Groceries"),

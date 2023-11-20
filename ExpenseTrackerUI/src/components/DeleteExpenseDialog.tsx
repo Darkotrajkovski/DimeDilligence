@@ -1,20 +1,19 @@
 import React, {useCallback} from "react";
 import {Dialog} from "primereact/dialog";
 import {Button} from "primereact/button";
-import {DefaultApi, ExpenseCategoryDto, ExpenseDto} from "../../generated-sources/openapi";
+import {DefaultApi, ExpenseDto} from "../../generated-sources/openapi";
 import {showErrorMessage, showSuccessMessage} from "../util.ts";
 
 interface Props {
   toastRef: any;
+  isIncome: boolean;
   expense: ExpenseDto;
   expenses: Array<ExpenseDto>;
   handleSetExpenses: Function;
   handleSetShowDeleteExpenseDialog: Function;
 }
 
-const DeleteExpenseDialog = ({toastRef, expense, expenses, handleSetExpenses, handleSetShowDeleteExpenseDialog}: Props) => {
-
-  console.log('delete')
+const DeleteExpenseDialog = ({toastRef, isIncome, expense, expenses, handleSetExpenses, handleSetShowDeleteExpenseDialog}: Props) => {
 
   const { id, description} = expense;
 
@@ -22,17 +21,17 @@ const DeleteExpenseDialog = ({toastRef, expense, expenses, handleSetExpenses, ha
     basePath: 'http://localhost:8080/v1',
   });
 
-  const deleteExpense = useCallback(id => {
+  const deleteExpense = useCallback(() => {
 
-    api.expenseIdDelete(id)
-      .then(() => {
+    const deleteEntryCall = isIncome ? api.incomeIdDelete(id) : api.expenseIdDelete(id);
+
+    deleteEntryCall.then(() => {
         showSuccessMessage(toastRef, `Successfully deleted expense ${description}`);
         const filteredExpenses = expenses.filter(a => a.id !== id);
         handleSetExpenses(filteredExpenses);
         handleSetShowDeleteExpenseDialog(false);
       })
-      .catch((e) => {
-        console.log(e)
+      .catch(() => {
         showErrorMessage(toastRef, `Failed to delete expense ${description}`);
       });
   }, []);

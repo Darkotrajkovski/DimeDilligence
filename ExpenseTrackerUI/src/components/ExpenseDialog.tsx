@@ -5,20 +5,24 @@ import {Button} from "primereact/button";
 import {Calendar} from "primereact/calendar";
 import {Dropdown} from "primereact/dropdown";
 import {InputText} from "primereact/inputtext";
-import {DefaultApi, ExpenseCategoryDto, ExpenseDto} from "../../generated-sources/openapi";
+import {DefaultApi, ExpenseCategoryDto, ExpenseDto, IncomeCategoryDto} from "../../generated-sources/openapi";
 import {categoryIcons, showErrorMessage, showSuccessMessage} from "../util.ts";
 
 interface Props {
   toastRef: any;
+  isIncome: boolean;
+  isEditMode: boolean;
   expense: ExpenseDto;
   handleSetExpense: Function;
   handleSetExpenses: Function;
+  handleSetDefaultExpense: Function;
   handleSetShowProductDialog: Function;
 }
 
-const ExpenseDialog = ({toastRef, expense, handleSetExpense, handleSetExpenses, handleSetShowProductDialog}: Props) => {
+const ExpenseDialog = ({toastRef, isIncome, isEditMode, expense, handleSetDefaultExpense, handleSetExpense, handleSetExpenses, handleSetShowProductDialog}: Props) => {
 
-  const expenseCategories = Object.keys(ExpenseCategoryDto)
+  const expenseCategories = Object.keys(ExpenseCategoryDto);
+  const incomeCategories = Object.keys(IncomeCategoryDto)
 
   const {
     description,
@@ -34,7 +38,6 @@ const ExpenseDialog = ({toastRef, expense, handleSetExpense, handleSetExpenses, 
     let _expense = {...expense};
     _expense[`${name}`] = value;
     handleSetExpense(_expense);
-    console.log(_expense)
 
   };
 
@@ -43,7 +46,6 @@ const ExpenseDialog = ({toastRef, expense, handleSetExpense, handleSetExpenses, 
     let _expense = {...expense};
     _expense[`${name}`] = val;
     handleSetExpense(_expense);
-    console.log(_expense)
   };
 
   const saveProduct = () => {
@@ -51,28 +53,37 @@ const ExpenseDialog = ({toastRef, expense, handleSetExpense, handleSetExpenses, 
       basePath: 'http://localhost:8080/v1',
     });
 
-    api.expensePost(expense)
+    const successMessage = isEditMode ? `Successfully edited expense: ${expense.description}` : `Successfully added expense: ${expense.description}`;
+    const errorMessage = isEditMode ? `Failed to edit expense: ${expense.description}` : `Failed to add expense: ${expense.description}`;
+
+    const createEntryCall = isIncome ? api.incomePost(expense) : api.expensePost(expense);
+
+    createEntryCall
       .then((response) => {
         handleSetExpenses(response.data)
-        showSuccessMessage(toastRef, "Successfully added new expense")
+        showSuccessMessage(toastRef, successMessage)
       })
-      .catch(() => showErrorMessage(toastRef, "Failed to add a new expense"));
-
+      .catch(() => showErrorMessage(toastRef, errorMessage));
 
       handleSetShowProductDialog(false);
-      handleSetExpense(emptyExpense);
+      handleSetDefaultExpense();
 
   };
 
+  const closeDialog = () => {
+    handleSetDefaultExpense();
+    handleSetShowProductDialog(false);
+  }
+
   const productDialogFooter = (
     <>
-      <Button label="Cancel" icon="pi pi-times" outlined onClick={() => handleSetShowProductDialog(false)}/>
+      <Button label="Cancel" icon="pi pi-times" outlined onClick={closeDialog}/>
       <Button label="Save" icon="pi pi-check" onClick={saveProduct}/>
     </>
   );
 
   const categoryOptionTemplate = (name: string) => {
-    const icon = categoryIcons(name);
+    const icon = categoryIcons(isIncome, name);
 
     return (
       <div className="flex align-items-center">
@@ -84,7 +95,8 @@ const ExpenseDialog = ({toastRef, expense, handleSetExpense, handleSetExpenses, 
 
   return (
     <Dialog visible style={{width: '32rem'}} breakpoints={{'960px': '75vw', '641px': '90vw'}} header="Product Details"
-            modal className="p-fluid" footer={productDialogFooter} onHide={() => handleSetShowProductDialog(false)}
+            modal className="p-fluid" footer={productDialogFooter}
+            onHide={closeDialog}
             draggable={false}>
 
       <div className="field">
@@ -94,7 +106,9 @@ const ExpenseDialog = ({toastRef, expense, handleSetExpense, handleSetExpenses, 
         <InputText
           id="description"
           value={description}
-          onChange={(e) => onInputChange(e.target.value, 'description')}
+          onChange={(e) => {
+            onInputChange(e.target.value, 'description')
+          }}
           required/>
       </div>
 
@@ -135,7 +149,7 @@ const ExpenseDialog = ({toastRef, expense, handleSetExpense, handleSetExpenses, 
           <Dropdown
             value={category}
             onChange={(e) => onInputChange(e.value, 'category')}
-            options={expenseCategories}
+            options={isIncome ? incomeCategories : expenseCategories}
             valueTemplate={categoryOptionTemplate} itemTemplate={categoryOptionTemplate}
             placeholder="Select a category"
             className="w-full md:w-14rem"/>

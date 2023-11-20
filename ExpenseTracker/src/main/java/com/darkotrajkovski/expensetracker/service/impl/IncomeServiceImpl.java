@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,12 +23,23 @@ public class IncomeServiceImpl implements IncomeService {
   private final IncomeMapper incomeMapper;
 
   @Override
-  @Cacheable(value = "incomes", key = "#ownerId")
   public List<IncomeDto> getAllIncomes() {
     if (incomeRepository.findAllByOwnerId(1L).isPresent()) {
       return incomeMapper.mapListToDto(incomeRepository.findAllByOwnerId(1L).get());
     }
     return new ArrayList<>();
+  }
+
+  @Override
+  @Cacheable(value = "incomes", key = "#ownerId")
+  public List<IncomeDto> getAllIncomesByDate(LocalDate date) {
+    return findAllByDateAndOwnerId(date);
+  }
+
+  @Override
+  public List<IncomeDto> getAllIncomesForYear(Integer year) {
+    List<Income> allByDate = incomeRepository.findAllByYearAndOwnerId(year, 1L);
+    return incomeMapper.mapListToDto(allByDate);
   }
 
   @Override
@@ -41,7 +53,7 @@ public class IncomeServiceImpl implements IncomeService {
   public List<IncomeDto> createIncome(IncomeDto incomeDto) {
     Income income = incomeMapper.mapFromDto(incomeDto);
     incomeRepository.save(income);
-    return getAllIncomes();
+    return findAllByDateAndOwnerId(LocalDate.now());
   }
 
   @Override
@@ -49,12 +61,17 @@ public class IncomeServiceImpl implements IncomeService {
   public List<IncomeDto> updateIncome(Long id, IncomeDto incomeDto) {
     Income income = incomeMapper.mapFromDto(incomeDto);
     incomeRepository.save(income);
-    return getAllIncomes();
+    return findAllByDateAndOwnerId(LocalDate.now());
   }
 
   @Override
   @CacheEvict(value = "incomes", allEntries = true, key = "#ownerId")
   public void deleteIncome(Long id) {
     incomeRepository.deleteById(id);
+  }
+
+  private List<IncomeDto> findAllByDateAndOwnerId(LocalDate date) {
+    List<Income> allByDate = incomeRepository.findAllByDateAndOwnerId(date.getYear(), date.getMonthValue(), 1L);
+    return incomeMapper.mapListToDto(allByDate);
   }
 }

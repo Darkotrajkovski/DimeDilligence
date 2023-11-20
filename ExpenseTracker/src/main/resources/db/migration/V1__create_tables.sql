@@ -10,8 +10,11 @@ CREATE TABLE income
     owner_id                  BIGINT      NOT NULL,
     amount                    BIGINT        NOT NULL,
     currency                  VARCHAR(5) NOT NULL,
+    description               VARCHAR(50),
+    place                     VARCHAR(30),
+    comment                   VARCHAR(50),
     date                      DATE        NOT NULL,
-    income_category           VARCHAR(15)      NOT NULL
+    category                  VARCHAR(15)      NOT NULL
 );
 
 CREATE TABLE expense

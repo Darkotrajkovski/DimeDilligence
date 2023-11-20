@@ -31,6 +31,7 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError } from './base';
 
 export const ExpenseCategoryDto = {
     Drinks: 'Drinks',
+    Coffee: 'Coffee',
     Food: 'Food',
     Groceries: 'Groceries',
     Travel: 'Travel',
@@ -111,6 +112,72 @@ export interface ExpenseDto {
  * @enum {string}
  */
 
+export const GoalsCategoryDto = {
+    Vehicle: 'Vehicle',
+    RealEstate: 'Real estate',
+    Travel: 'Travel',
+    Education: 'Education',
+    Retirement: 'Retirement',
+    HomeImprovement: 'Home Improvement',
+    TechnologyAndGadgets: 'Technology and Gadgets',
+    Charity: 'Charity',
+    HobbiesAndInterests: 'Hobbies and Interests'
+} as const;
+
+export type GoalsCategoryDto = typeof GoalsCategoryDto[keyof typeof GoalsCategoryDto];
+
+
+/**
+ * 
+ * @export
+ * @interface GoalsDto
+ */
+export interface GoalsDto {
+    /**
+     * 
+     * @type {number}
+     * @memberof GoalsDto
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GoalsDto
+     */
+    'ownerId'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof GoalsDto
+     */
+    'amount'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GoalsDto
+     */
+    'currency'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GoalsDto
+     */
+    'date'?: string;
+    /**
+     * 
+     * @type {GoalsCategoryDto}
+     * @memberof GoalsDto
+     */
+    'category'?: GoalsCategoryDto;
+}
+
+
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
 export const IncomeCategoryDto = {
     Salary: 'Salary',
     Rent: 'Rent'
@@ -139,10 +206,10 @@ export interface IncomeDto {
     'ownerId'?: number;
     /**
      * 
-     * @type {string}
+     * @type {number}
      * @memberof IncomeDto
      */
-    'amount'?: string;
+    'amount'?: number;
     /**
      * 
      * @type {string}
@@ -157,13 +224,50 @@ export interface IncomeDto {
     'date'?: string;
     /**
      * 
+     * @type {string}
+     * @memberof IncomeDto
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof IncomeDto
+     */
+    'place'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof IncomeDto
+     */
+    'comment'?: string;
+    /**
+     * 
      * @type {IncomeCategoryDto}
      * @memberof IncomeDto
      */
-    'incomeCategory'?: IncomeCategoryDto;
+    'category'?: IncomeCategoryDto;
 }
 
 
+/**
+ * 
+ * @export
+ * @interface ProjectionDto
+ */
+export interface ProjectionDto {
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ProjectionDto
+     */
+    'incomes'?: Array<string>;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ProjectionDto
+     */
+    'expenses'?: Array<string>;
+}
 /**
  * 
  * @export
@@ -348,6 +452,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary Get all expense records for specific month and year
+         * @param {string} date 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        expenseMonthDateGet: async (date: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'date' is not null or undefined
+            assertParamExists('expenseMonthDateGet', 'date', date)
+            const localVarPath = `/expense/month/{date}`
+                .replace(`{${"date"}}`, encodeURIComponent(String(date)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Create a new expense record
          * @param {ExpenseDto} expenseDto 
          * @param {*} [options] Override http request option.
@@ -376,6 +514,180 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(expenseDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get all goal records
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        goalsGet: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/goals`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Delete an goal record by ID
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        goalsIdDelete: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('goalsIdDelete', 'id', id)
+            const localVarPath = `/goals/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get a goal record by ID
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        goalsIdGet: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('goalsIdGet', 'id', id)
+            const localVarPath = `/goals/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Update an goal record by ID
+         * @param {number} id 
+         * @param {GoalsDto} goalsDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        goalsIdPut: async (id: number, goalsDto: GoalsDto, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('goalsIdPut', 'id', id)
+            // verify required parameter 'goalsDto' is not null or undefined
+            assertParamExists('goalsIdPut', 'goalsDto', goalsDto)
+            const localVarPath = `/goals/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(goalsDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Create a new goal record
+         * @param {GoalsDto} goalsDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        goalsPost: async (goalsDto: GoalsDto, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'goalsDto' is not null or undefined
+            assertParamExists('goalsPost', 'goalsDto', goalsDto)
+            const localVarPath = `/goals`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(goalsDto, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -522,6 +834,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary Get all income records for specific month and year
+         * @param {string} date 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        incomeMonthDateGet: async (date: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'date' is not null or undefined
+            assertParamExists('incomeMonthDateGet', 'date', date)
+            const localVarPath = `/income/month/{date}`
+                .replace(`{${"date"}}`, encodeURIComponent(String(date)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Create a new income record
          * @param {IncomeDto} incomeDto 
          * @param {*} [options] Override http request option.
@@ -550,6 +896,40 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(incomeDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get all projection data
+         * @param {number} year 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        projectionYearGet: async (year: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'year' is not null or undefined
+            assertParamExists('projectionYearGet', 'year', year)
+            const localVarPath = `/projection/{year}`
+                .replace(`{${"year"}}`, encodeURIComponent(String(year)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -612,6 +992,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Get all expense records for specific month and year
+         * @param {string} date 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async expenseMonthDateGet(date: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ExpenseDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.expenseMonthDateGet(date, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary Create a new expense record
          * @param {ExpenseDto} expenseDto 
          * @param {*} [options] Override http request option.
@@ -619,6 +1010,61 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async expensePost(expenseDto: ExpenseDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ExpenseDto>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.expensePost(expenseDto, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary Get all goal records
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async goalsGet(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GoalsDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.goalsGet(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary Delete an goal record by ID
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async goalsIdDelete(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.goalsIdDelete(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary Get a goal record by ID
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async goalsIdGet(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GoalsDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.goalsIdGet(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary Update an goal record by ID
+         * @param {number} id 
+         * @param {GoalsDto} goalsDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async goalsIdPut(id: number, goalsDto: GoalsDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GoalsDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.goalsIdPut(id, goalsDto, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary Create a new goal record
+         * @param {GoalsDto} goalsDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async goalsPost(goalsDto: GoalsDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GoalsDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.goalsPost(goalsDto, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -667,6 +1113,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Get all income records for specific month and year
+         * @param {string} date 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async incomeMonthDateGet(date: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<IncomeDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.incomeMonthDateGet(date, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary Create a new income record
          * @param {IncomeDto} incomeDto 
          * @param {*} [options] Override http request option.
@@ -674,6 +1131,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async incomePost(incomeDto: IncomeDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<IncomeDto>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.incomePost(incomeDto, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary Get all projection data
+         * @param {number} year 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async projectionYearGet(year: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectionDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.projectionYearGet(year, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -728,6 +1196,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary Get all expense records for specific month and year
+         * @param {string} date 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        expenseMonthDateGet(date: string, options?: any): AxiosPromise<Array<ExpenseDto>> {
+            return localVarFp.expenseMonthDateGet(date, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Create a new expense record
          * @param {ExpenseDto} expenseDto 
          * @param {*} [options] Override http request option.
@@ -735,6 +1213,56 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         expensePost(expenseDto: ExpenseDto, options?: any): AxiosPromise<Array<ExpenseDto>> {
             return localVarFp.expensePost(expenseDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get all goal records
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        goalsGet(options?: any): AxiosPromise<Array<GoalsDto>> {
+            return localVarFp.goalsGet(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Delete an goal record by ID
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        goalsIdDelete(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.goalsIdDelete(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get a goal record by ID
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        goalsIdGet(id: number, options?: any): AxiosPromise<GoalsDto> {
+            return localVarFp.goalsIdGet(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Update an goal record by ID
+         * @param {number} id 
+         * @param {GoalsDto} goalsDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        goalsIdPut(id: number, goalsDto: GoalsDto, options?: any): AxiosPromise<Array<GoalsDto>> {
+            return localVarFp.goalsIdPut(id, goalsDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Create a new goal record
+         * @param {GoalsDto} goalsDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        goalsPost(goalsDto: GoalsDto, options?: any): AxiosPromise<Array<GoalsDto>> {
+            return localVarFp.goalsPost(goalsDto, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -778,6 +1306,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary Get all income records for specific month and year
+         * @param {string} date 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        incomeMonthDateGet(date: string, options?: any): AxiosPromise<Array<IncomeDto>> {
+            return localVarFp.incomeMonthDateGet(date, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Create a new income record
          * @param {IncomeDto} incomeDto 
          * @param {*} [options] Override http request option.
@@ -785,6 +1323,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         incomePost(incomeDto: IncomeDto, options?: any): AxiosPromise<Array<IncomeDto>> {
             return localVarFp.incomePost(incomeDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get all projection data
+         * @param {number} year 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        projectionYearGet(year: number, options?: any): AxiosPromise<ProjectionDto> {
+            return localVarFp.projectionYearGet(year, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -837,6 +1385,16 @@ export interface DefaultApiInterface {
 
     /**
      * 
+     * @summary Get all expense records for specific month and year
+     * @param {string} date 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    expenseMonthDateGet(date: string, options?: AxiosRequestConfig): AxiosPromise<Array<ExpenseDto>>;
+
+    /**
+     * 
      * @summary Create a new expense record
      * @param {ExpenseDto} expenseDto 
      * @param {*} [options] Override http request option.
@@ -844,6 +1402,56 @@ export interface DefaultApiInterface {
      * @memberof DefaultApiInterface
      */
     expensePost(expenseDto: ExpenseDto, options?: AxiosRequestConfig): AxiosPromise<Array<ExpenseDto>>;
+
+    /**
+     * 
+     * @summary Get all goal records
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    goalsGet(options?: AxiosRequestConfig): AxiosPromise<Array<GoalsDto>>;
+
+    /**
+     * 
+     * @summary Delete an goal record by ID
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    goalsIdDelete(id: number, options?: AxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * 
+     * @summary Get a goal record by ID
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    goalsIdGet(id: number, options?: AxiosRequestConfig): AxiosPromise<GoalsDto>;
+
+    /**
+     * 
+     * @summary Update an goal record by ID
+     * @param {number} id 
+     * @param {GoalsDto} goalsDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    goalsIdPut(id: number, goalsDto: GoalsDto, options?: AxiosRequestConfig): AxiosPromise<Array<GoalsDto>>;
+
+    /**
+     * 
+     * @summary Create a new goal record
+     * @param {GoalsDto} goalsDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    goalsPost(goalsDto: GoalsDto, options?: AxiosRequestConfig): AxiosPromise<Array<GoalsDto>>;
 
     /**
      * 
@@ -887,6 +1495,16 @@ export interface DefaultApiInterface {
 
     /**
      * 
+     * @summary Get all income records for specific month and year
+     * @param {string} date 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    incomeMonthDateGet(date: string, options?: AxiosRequestConfig): AxiosPromise<Array<IncomeDto>>;
+
+    /**
+     * 
      * @summary Create a new income record
      * @param {IncomeDto} incomeDto 
      * @param {*} [options] Override http request option.
@@ -894,6 +1512,16 @@ export interface DefaultApiInterface {
      * @memberof DefaultApiInterface
      */
     incomePost(incomeDto: IncomeDto, options?: AxiosRequestConfig): AxiosPromise<Array<IncomeDto>>;
+
+    /**
+     * 
+     * @summary Get all projection data
+     * @param {number} year 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    projectionYearGet(year: number, options?: AxiosRequestConfig): AxiosPromise<ProjectionDto>;
 
 }
 
@@ -954,6 +1582,18 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
 
     /**
      * 
+     * @summary Get all expense records for specific month and year
+     * @param {string} date 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public expenseMonthDateGet(date: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).expenseMonthDateGet(date, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Create a new expense record
      * @param {ExpenseDto} expenseDto 
      * @param {*} [options] Override http request option.
@@ -962,6 +1602,66 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      */
     public expensePost(expenseDto: ExpenseDto, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).expensePost(expenseDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get all goal records
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public goalsGet(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).goalsGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Delete an goal record by ID
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public goalsIdDelete(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).goalsIdDelete(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get a goal record by ID
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public goalsIdGet(id: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).goalsIdGet(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update an goal record by ID
+     * @param {number} id 
+     * @param {GoalsDto} goalsDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public goalsIdPut(id: number, goalsDto: GoalsDto, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).goalsIdPut(id, goalsDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Create a new goal record
+     * @param {GoalsDto} goalsDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public goalsPost(goalsDto: GoalsDto, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).goalsPost(goalsDto, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1014,6 +1714,18 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
 
     /**
      * 
+     * @summary Get all income records for specific month and year
+     * @param {string} date 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public incomeMonthDateGet(date: string, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).incomeMonthDateGet(date, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Create a new income record
      * @param {IncomeDto} incomeDto 
      * @param {*} [options] Override http request option.
@@ -1022,6 +1734,18 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      */
     public incomePost(incomeDto: IncomeDto, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).incomePost(incomeDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get all projection data
+     * @param {number} year 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public projectionYearGet(year: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).projectionYearGet(year, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

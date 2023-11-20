@@ -1,5 +1,6 @@
 package com.darkotrajkovski.expensetracker.rest;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -15,12 +16,16 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class IncomeController implements IncomeApi {
-
   private final IncomeService incomeService;
 
   @Override
   public ResponseEntity<List<IncomeDto>> incomeGet() {
     return ResponseEntity.ofNullable(incomeService.getAllIncomes());
+  }
+
+  @Override
+  public ResponseEntity<List<IncomeDto>> incomeMonthDateGet(LocalDate date) {
+    return ResponseEntity.ofNullable(incomeService.getAllIncomesByDate(date));
   }
 
   @Override

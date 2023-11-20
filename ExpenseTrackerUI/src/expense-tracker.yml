@@ -34,6 +34,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IncomeDto'
+  /income/month/{date}:
+    get:
+      summary: Get all income records for specific month and year
+      parameters:
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncomeDto'
   /income/{id}:
     get:
       summary: Get an income record by ID
@@ -120,6 +139,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ExpenseDto'
+  /expense/month/{date}:
+    get:
+      summary: Get all expense records for specific month and year
+      parameters:
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseDto'
   /expense/{id}:
     get:
       summary: Get an expense record by ID
@@ -177,6 +215,109 @@ paths:
       responses:
         '204':
           description: Successfully deleted
+  /projection/{year}:
+    get:
+      summary: Get all projection data
+      parameters:
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectionDto'
+  /goals:
+    get:
+      summary: Get all goal records
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GoalsDto'
+    post:
+      summary: Create a new goal record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoalsDto'
+      responses:
+        '201':
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GoalsDto'
+  /goals/{id}:
+    get:
+      summary: Get a goal record by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalsDto'
+        '404':
+          description: Expense record not found
+    put:
+      summary: Update an goal record by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoalsDto'
+      responses:
+        '200':
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GoalsDto'
+        '404':
+          description: Expense record not found
+    delete:
+      summary: Delete an goal record by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Successfully deleted
 components:
   schemas:
     IncomeDto:
@@ -189,14 +330,20 @@ components:
           type: integer
           format: int64
         amount:
-          type: string  # Represent as a string in OpenAPI to allow for BigDecimal
-          format: decimal
+          type: number  # Represent as a string in OpenAPI to allow for BigDecimal
+          format: bigdecimal
         currency:
           type: string
         date:
           type: string
           format: date
-        incomeCategory:
+        description:
+          type: string
+        place:
+          type: string
+        comment:
+          type: string
+        category:
           $ref: '#/components/schemas/IncomeCategoryDto'
     ExpenseDto:
       type: object
@@ -232,6 +379,7 @@ components:
       type: string
       enum:
         - Drinks
+        - Coffee
         - Food
         - Groceries
         - Travel
@@ -255,3 +403,47 @@ components:
         date:
           type: string
           format: date
+    ProjectionDto:
+      type: object
+      properties:
+        incomes:
+          type: array
+          items:
+            type: string
+            format: decimal
+        expenses:
+          type: array
+          items:
+            type: string
+            format: decimal
+    GoalsDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        ownerId:
+          type: integer
+          format: int64
+        amount:
+          type: string
+          format: decimal
+        currency:
+          type: string
+        date:
+          type: string
+          format: date
+        category:
+          $ref: '#/components/schemas/GoalsCategoryDto'
+    GoalsCategoryDto:
+      type: string
+      enum:
+        - Vehicle
+        - Real estate
+        - Travel
+        - Education
+        - Retirement
+        - Home Improvement
+        - Technology and Gadgets
+        - Charity
+        - Hobbies and Interests

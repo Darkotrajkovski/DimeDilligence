@@ -28,9 +28,12 @@ public class Income {
   private Long ownerId;
   private BigDecimal amount;
   private String currency;
+  private String description;
+  private String place;
+  private String comment;
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate date;
   @Enumerated(EnumType.STRING)
-  private IncomeCategory incomeCategory;
+  private IncomeCategory category;
 
 }
