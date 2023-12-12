@@ -114,14 +114,13 @@ export interface ExpenseDto {
 
 export const GoalsCategoryDto = {
     Vehicle: 'Vehicle',
-    RealEstate: 'Real estate',
+    RealEstate: 'RealEstate',
     Travel: 'Travel',
     Education: 'Education',
-    Retirement: 'Retirement',
-    HomeImprovement: 'Home Improvement',
-    TechnologyAndGadgets: 'Technology and Gadgets',
+    HomeImprovement: 'HomeImprovement',
+    TechnologyAndGadgets: 'TechnologyAndGadgets',
     Charity: 'Charity',
-    HobbiesAndInterests: 'Hobbies and Interests'
+    Hobbies: 'Hobbies'
 } as const;
 
 export type GoalsCategoryDto = typeof GoalsCategoryDto[keyof typeof GoalsCategoryDto];
@@ -157,6 +156,12 @@ export interface GoalsDto {
      * @memberof GoalsDto
      */
     'currency'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GoalsDto
+     */
+    'description'?: string;
     /**
      * 
      * @type {string}

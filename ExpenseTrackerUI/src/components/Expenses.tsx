@@ -6,9 +6,7 @@ import {Tag} from "primereact/tag";
 import ExpenseDialog from "./ExpenseDialog.tsx";
 import {
   DefaultApi,
-  ExpenseCategoryDto,
   ExpenseDto,
-  IncomeCategoryDto,
   IncomeDto
 } from "../../generated-sources/openapi";
 import moment from "moment";
@@ -30,7 +28,7 @@ const Expenses = ({isIncome}: Props) => {
     ownerId: 1,
     amount: 0,
     currency: 'USD',
-    date: "2023-11-14",
+    date: moment(new Date()).format('YYYY-MM-DD'),
     description: '',
     place: '',
     comment: '',
@@ -124,12 +122,12 @@ const Expenses = ({isIncome}: Props) => {
         {showAddExpenseDialog &&
             <ExpenseDialog toastRef={toastRef} isIncome={isIncome} isEditMode={false} expense={expense} handleSetExpense={setExpense}
                            handleSetExpenses={setExpenses}
-                           handleSetShowProductDialog={() => setShowAddExpenseDialog(false)}
+                           handleSetShowExpenseDialog={() => setShowAddExpenseDialog(false)}
                            handleSetDefaultExpense={() => setExpense(emptyExpense)}/>}
         {showEditExpenseDialog &&
             <ExpenseDialog toastRef={toastRef} isIncome={isIncome} isEditMode expense={expense} handleSetExpense={setExpense}
                            handleSetExpenses={setExpenses}
-                           handleSetShowProductDialog={() => setShowEditExpenseDialog(false)}
+                           handleSetShowExpenseDialog={() => setShowEditExpenseDialog(false)}
                            handleSetDefaultExpense={() => setExpense(emptyExpense)}/>}
         {showDeleteExpenseDialog &&
             <DeleteExpenseDialog toastRef={toastRef} isIncome={isIncome} expenses={expenses} expense={expenseToDelete}

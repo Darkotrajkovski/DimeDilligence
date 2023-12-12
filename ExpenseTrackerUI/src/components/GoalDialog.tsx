@@ -5,96 +5,90 @@ import {Button} from "primereact/button";
 import {Calendar} from "primereact/calendar";
 import {Dropdown} from "primereact/dropdown";
 import {InputText} from "primereact/inputtext";
-import {DefaultApi, ExpenseCategoryDto, ExpenseDto, IncomeCategoryDto} from "../../generated-sources/openapi";
-import {categoryIcons, showErrorMessage, showSuccessMessage} from "../util.ts";
+import {DefaultApi, GoalsCategoryDto, GoalsDto} from "../../generated-sources/openapi";
+import {goalIcons, showErrorMessage, showSuccessMessage} from "../util.ts";
 
 interface Props {
   toastRef: any;
-  isIncome: boolean;
   isEditMode: boolean;
-  expense: ExpenseDto;
-  handleSetExpense: Function;
-  handleSetExpenses: Function;
-  handleSetDefaultExpense: Function;
-  handleSetShowExpenseDialog: Function;
+  goal: GoalsDto;
+  handleSetGoal: Function;
+  handleSetGoals: Function;
+  handleSetDefaultGoal: Function;
+  handleSetShowGoalDialog: Function;
 }
 
-const ExpenseDialog = ({toastRef, isIncome, isEditMode, expense, handleSetDefaultExpense, handleSetExpense, handleSetExpenses, handleSetShowExpenseDialog}: Props) => {
+const GoalDialog = ({toastRef, isEditMode, goal, handleSetDefaultGoal, handleSetGoal, handleSetGoals, handleSetShowGoalDialog}: Props) => {
 
-  const expenseCategories = Object.keys(ExpenseCategoryDto);
-  const incomeCategories = Object.keys(IncomeCategoryDto)
+  const goalCategories = Object.keys(GoalsCategoryDto);
 
   const {
     description,
     category,
     amount,
     currency,
-    date,
-    place,
-    comment
-  } = expense;
+    date
+  } = goal;
 
   const onInputChange = (value: any, name: string) => {
-    let _expense = {...expense};
-    _expense[`${name}`] = value;
-    handleSetExpense(_expense);
+    let _goal = {...goal};
+    _goal[`${name}`] = value;
+    handleSetGoal(_goal);
 
   };
 
   const onInputNumberChange = (e: InputNumberChangeEvent, name: string) => {
     const val = e.value || 0;
-    let _expense = {...expense};
-    _expense[`${name}`] = val;
-    handleSetExpense(_expense);
+    let _goal = {...goal};
+    _goal[`${name}`] = val;
+    handleSetGoal(_goal);
   };
 
-  const saveExpense = () => {
+  const saveGoal = () => {
     const api = new DefaultApi({
       basePath: 'http://localhost:8080/v1',
     });
 
-    const successMessage = isEditMode ? `Successfully edited expense: ${expense.description}` : `Successfully added expense: ${expense.description}`;
-    const errorMessage = isEditMode ? `Failed to edit expense: ${expense.description}` : `Failed to add expense: ${expense.description}`;
+    const successMessage = isEditMode ? `Successfully edited goal: ${goal.description}` : `Successfully added goal: ${goal.description}`;
+    const errorMessage = isEditMode ? `Failed to edit goal: ${goal.description}` : `Failed to add goal: ${goal.description}`;
 
-    const createEntryCall = isIncome ? api.incomePost(expense) : api.expensePost(expense);
-
-    createEntryCall
+    api.goalsPost(goal)
       .then((response) => {
-        handleSetExpenses(response.data)
+        console.log(response)
+        handleSetGoals(response.data)
         showSuccessMessage(toastRef, successMessage)
       })
       .catch(() => showErrorMessage(toastRef, errorMessage));
 
-      handleSetShowExpenseDialog(false);
-      handleSetDefaultExpense();
-
+      handleSetShowGoalDialog(false);
+      handleSetDefaultGoal();
   };
 
   const closeDialog = () => {
-    handleSetDefaultExpense();
-    handleSetShowExpenseDialog(false);
+    handleSetDefaultGoal();
+    handleSetShowGoalDialog(false);
   }
 
   const productDialogFooter = (
     <>
       <Button label="Cancel" icon="pi pi-times" outlined onClick={closeDialog}/>
-      <Button label="Save" icon="pi pi-check" onClick={saveExpense}/>
+      <Button label="Save" icon="pi pi-check" onClick={saveGoal}/>
     </>
   );
 
-  const categoryOptionTemplate = (name: string) => {
-    const icon = categoryIcons(isIncome, name);
+  const categoryOptionTemplate = (name: string, isItem) => {
+    const icon = goalIcons(name);
 
     return (
       <div className="flex align-items-center">
         <img alt={name} src={icon} className={`mr-2`} style={{ width: '18px' }} />
-        <div>{name}</div>
+        <div>{isItem ? name : GoalsCategoryDto[name]}</div>
       </div>
     );
   };
 
   return (
-    <Dialog visible style={{width: '32rem'}} breakpoints={{'960px': '75vw', '641px': '90vw'}} header="Expense Details"
+    <Dialog visible style={{width: '32rem'}} breakpoints={{'960px': '75vw', '641px': '90vw'}} header="GoalDetails"
             modal className="p-fluid" footer={productDialogFooter}
             onHide={closeDialog}
             draggable={false}>
@@ -149,37 +143,15 @@ const ExpenseDialog = ({toastRef, isIncome, isEditMode, expense, handleSetDefaul
           <Dropdown
             value={category}
             onChange={(e) => onInputChange(e.value, 'category')}
-            options={isIncome ? incomeCategories : expenseCategories}
-            valueTemplate={categoryOptionTemplate} itemTemplate={categoryOptionTemplate}
+            options={goalCategories}
+            valueTemplate={value => categoryOptionTemplate(value, true)}
+            itemTemplate={value => categoryOptionTemplate(value, false)}
             placeholder="Select a category"
             className="w-full md:w-14rem"/>
         </div>
-
-        <div className="field">
-          <label htmlFor="place" className="font-bold">
-            Place
-          </label>
-          <InputText
-            id="place"
-            value={place}
-            onChange={(e) => onInputChange(e.target.value, 'place')}
-            required/>
-        </div>
       </div>
-
-      <div className="field">
-        <label htmlFor="comment" className="font-bold">
-          Comment
-        </label>
-        <InputText
-          id="comment"
-          value={comment}
-          onChange={(e) => onInputChange(e.target.value, 'comment')}
-          required/>
-      </div>
-
     </Dialog>
   )
 }
 
-export default ExpenseDialog;
+export default GoalDialog;

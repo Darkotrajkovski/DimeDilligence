@@ -1,7 +1,28 @@
-import {ExpenseCategoryDto, IncomeCategoryDto} from "../generated-sources/openapi";
+import {ExpenseCategoryDto, GoalsCategoryDto, GoalsDto, IncomeCategoryDto} from "../generated-sources/openapi";
 
 export const categoryIcons = (isIncome: boolean, category: ExpenseCategoryDto | IncomeCategoryDto) =>
   isIncome ? incomeCategoryIcon(category) : expenseCategoryIcons(category);
+
+export const goalIcons = (category: GoalsCategoryDto) => {
+  switch (category) {
+    case "RealEstate":
+      return 'src/assets/realestate.jpg';
+    case "HomeImprovement":
+      return 'src/assets/furniture.png';
+    case "Travel":
+      return 'src/assets/travel-plane.png';
+    case "Vehicle":
+      return 'src/assets/car.jpg';
+    case "TechnologyAndGadgets":
+      return 'src/assets/airpods.png';
+    case "Education":
+      return 'src/assets/education.png';
+    case "Hobbies":
+      return 'src/assets/painting.png';
+    case "Charity":
+      return 'src/assets/charity.png';
+  }
+}
 
 export const incomeCategoryIcon = (category: IncomeCategoryDto) => {
   switch (category) {
@@ -39,6 +60,29 @@ export const expenseCategoryIcons = (category: ExpenseCategoryDto) => {
 
 export const getCategoryColor = (isIncome, category) =>
   isIncome ? getIncomeCategoryColor(category) : getExpenseCategoryColor(category);
+
+export const getGoalCategoryColor = (category: GoalsCategoryDto) => {
+  switch (category) {
+    case "Real estate":
+      return '--primary-500';
+    case "Home Improvement":
+      return '--primary-500';
+    case "Travel":
+      return '--primary-500';
+    case "Vehicle":
+      return '--primary-500';
+    case "Technology and Gadgets":
+      return '--primary-500';
+    case "Education":
+      return '--primary-500';
+    case "Hobbies and Interests":
+      return '--primary-500';
+    case "Charity":
+      return '--primary-500';
+    case "Retirement":
+      return '--primary-500';
+  }
+}
 
 const getExpenseCategoryColor = (expenseCategory: ExpenseCategoryDto | undefined) => {
   switch (expenseCategory) {

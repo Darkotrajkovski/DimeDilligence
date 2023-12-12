@@ -1,11 +1,8 @@
 package com.darkotrajkovski.expensetracker.rest;
 
 import com.darkotrajkovski.api.GoalsApi;
-import com.darkotrajkovski.api.ProjectionApi;
 import com.darkotrajkovski.expensetracker.service.GoalsService;
-import com.darkotrajkovski.expensetracker.service.ProjectionService;
 import com.darkotrajkovski.model.GoalsDto;
-import com.darkotrajkovski.model.ProjectionDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

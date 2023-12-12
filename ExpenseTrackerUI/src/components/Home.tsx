@@ -4,6 +4,7 @@ import Expenses from "./Expenses.tsx";
 import {Card} from "primereact/card";
 import {Button} from "primereact/button";
 import Projection from "./Projection.tsx";
+import Goals from "./Goals.tsx";
 
 const INCOME = 'INCOME';
 const EXPENSE = 'EXPENSE';
@@ -46,6 +47,7 @@ const Home = () => {
           {selectedTab === INCOME && <Expenses isIncome />}
           {selectedTab === EXPENSE && <Expenses />}
           {selectedTab === PROJECTION && <Projection />}
+          {selectedTab === FUTURE_GOALS && <Goals />}
         </Card>
     </div>
   )

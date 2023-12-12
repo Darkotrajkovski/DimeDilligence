@@ -1,15 +1,40 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {Chart} from "primereact/chart";
-import {Calendar} from "primereact/calendar";
+import React, {useEffect, useRef, useState} from "react";
+import * as _ from "lodash";
 import {Skeleton} from "primereact/skeleton";
-import {DefaultApi} from "../../generated-sources/openapi";
-import moment from "moment";
+import {DefaultApi, ExpenseDto, GoalsDto} from "../../generated-sources/openapi";
+import {DataView} from "primereact/dataview";
+import {categoryIcons, getCategoryColor, getGoalCategoryColor, goalIcons} from "../util.ts";
+import {Tag} from "primereact/tag";
+import {Button} from "primereact/button";
+import {Toast} from "primereact/toast";
+import {Calendar} from "primereact/calendar";
+import moment from "moment/moment";
+import ExpenseDialog from "./ExpenseDialog.tsx";
+import GoalDialog from "./GoalDialog.tsx";
+import DeleteExpenseDialog from "./DeleteExpenseDialog.tsx";
+import DeleteGoalDialog from "./DeleteGoalDialog.tsx";
 
 const Goals = () => {
 
-  const [goals, setGoals] = useState<number[]>();
+  const emptyGoal: GoalsDto = {
+    id: null,
+    ownerId: 1,
+    amount: 0,
+    currency: 'USD',
+    date: moment(new Date()).format('YYYY-MM-DD'),
+    description: '',
+    category: ''
+  };
+
   const [loading, setLoading] = useState<boolean>(true);
+  const [goals, setGoals] = useState<GoalsDto[]>();
   const [date, setDate] = useState<Date>(new Date());
+  const toastRef = useRef(null);
+  const [showAddGoalDialog, setShowAddGoalDialog] = useState<boolean>(false);
+  const [showEditGoalDialog, setShowEditGoalDialog] = useState<boolean>(false);
+  const [showDeleteGoalDialog, setShowDeleteGoalDialog] = useState<boolean>(false);
+  const [goalToDelete, setGoalToDelete] = useState<GoalsDto>();
+  const [goal, setGoal] = useState<GoalsDto>(emptyGoal);
 
   const api = new DefaultApi({
     basePath: 'http://localhost:8080/v1',
@@ -17,72 +42,86 @@ const Goals = () => {
 
   useEffect(() => {
     setLoading(true);
-    const year = moment(date).year();
-    console.log(date, year)
-    api.projectionYearGet(year)
-      .then(projection => {
-        setIncomes(projection.data.incomes);
-        setExpenses(projection.data.expenses);
+    api.goalsGet()
+      .then(response => {
+        console.log(response)
+        setGoals(response.data);
       })
       .catch();
 
     setLoading(false);
-  }, [date]);
+  }, []);
 
-  const chartData = useMemo(() => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    return {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        datasets: [
-      {
-        label: 'Incomes',
-        fill: false,
-        borderColor: documentStyle.getPropertyValue('--blue-500'),
-        yAxisID: 'y',
-        tension: 0.4,
-        backgroundColor: documentStyle.getPropertyValue('--blue-500'),
-        data: incomes
-      },
-      {
-        label: 'Expenses',
-        fill: false,
-        borderColor: documentStyle.getPropertyValue('--red-500'),
-        yAxisID: 'y',
-        tension: 0.4,
-        backgroundColor: documentStyle.getPropertyValue('--red-500'),
-        data: expenses
-      }
-    ]
-    }
-  }, [incomes, expenses]);
+  const formatDate = (date) => {
+    return moment(date).format('D MMM YYYY');
+  }
 
-  const chartOptions = {
-    stacked: false,
-    maintainAspectRatio: false,
-    aspectRatio: 0.6,
-    plugins: {
-      legend: {
-        labels: {
-          fill: true
-        }
-      }
-    },
-    scales: {
-      y: {
-        type: 'linear',
-        display: true,
-        position: 'left',
-      }
-    }
+  const handleShowDeleteGoalDialog = (goalToDelete: GoalsDto) => {
+    setGoalToDelete(goalToDelete)
+    setShowDeleteGoalDialog(true);
+  }
+
+  const handleShowEditGoalDialog = (goalDto: GoalsDto) => {
+    setGoal(goalDto)
+    setShowEditGoalDialog(true);
+  }
+
+  const itemTemplate = (_goal: GoalsDto) => {
+    return (
+      <div className="col-12">
+        <div className="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+          <img className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" src={goalIcons(_goal.category)} alt={_goal.description} />
+          <div className="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+            <div className="flex flex-column align-items-center sm:align-items-start gap-3">
+              <div className="text-2xl font-bold text-900">{_goal.description}</div>
+              <div className="flex align-items-center gap-3">
+                <Tag style={{background: `var(${getGoalCategoryColor(_goal.category)})`}}>
+                  <span className="flex align-items-center gap-2">
+                    <i className="pi pi-tag" />
+                    <span className="font-semibold">{_goal.category}</span>
+                  </span>
+                </Tag>
+              </div>
+            </div>
+            <div className="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2 line-height-4">
+              <span className="text-2xl font-semibold">${_goal.amount}</span>
+              <span className="text-2xl font-semibold">{formatDate(_goal.date)}</span>
+              <div className="flex flex-row">
+                <Button icon="pi pi-pencil" outlined className="mr-2" onClick={() => handleShowEditGoalDialog(_goal)} />
+                <Button icon="pi pi-trash" outlined severity="danger" onClick={() => handleShowDeleteGoalDialog(_goal)} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
     <>
-      <Calendar className="mr-2" value={date} onChange={(e) => setDate(e.value)} view="year" dateFormat="yy" showIcon/>
+      <Toast ref={toastRef}/>
+      <Calendar className="mr-2" value={date} onChange={(e) => setDate(e.value)} view="month" dateFormat="M yy" showIcon/>
+      <Button className="mr-2" label="Add a new goal" icon="pi pi-plus" severity="success" onClick={() => setShowAddGoalDialog(true)}/>
       {loading
-        ? <Skeleton className="mt-2" height="20rem"/>
-        : <Chart type="line" data={chartData} options={chartOptions} key={date}/>
+        ? _.range(5, 10).map(() => <Skeleton className="mt-4" width="100%" height="4rem" />)
+        : <DataView value={goals} itemTemplate={itemTemplate} />
       }
+      {showAddGoalDialog &&
+          <GoalDialog toastRef={toastRef} isEditMode={false} goal={goal} handleSetGoal={setGoal}
+                      handleSetDefaultGoal={() => setGoal(emptyGoal)}
+                      handleSetGoals={setGoals}
+                      handleSetShowGoalDialog={() => setShowAddGoalDialog(false)}/>}
+
+      {showEditGoalDialog &&
+          <GoalDialog toastRef={toastRef} isEditMode goal={goal} handleSetGoal={setGoal}
+                      handleSetDefaultGoal={() => setGoal(emptyGoal)}
+                      handleSetGoals={setGoals}
+                      handleSetShowGoalDialog={() => setShowEditGoalDialog(false)}/>}
+
+      {showDeleteGoalDialog &&
+          <DeleteGoalDialog toastRef={toastRef} goals={goals} goal={goalToDelete}
+                               handleSetGoals={setGoals}
+                               handleSetShowDeleteGoalDialog={() => setShowDeleteGoalDialog(false)}/>}
     </>
   )
 }

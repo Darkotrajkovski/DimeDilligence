@@ -430,6 +430,8 @@ components:
           format: decimal
         currency:
           type: string
+        description:
+          type: string
         date:
           type: string
           format: date
@@ -439,11 +441,10 @@ components:
       type: string
       enum:
         - Vehicle
-        - Real estate
+        - RealEstate
         - Travel
         - Education
-        - Retirement
-        - Home Improvement
-        - Technology and Gadgets
+        - HomeImprovement
+        - TechnologyAndGadgets
         - Charity
-        - Hobbies and Interests
+        - Hobbies
