@@ -1,0 +1,113 @@
+{
+  "common": {
+    "yes": "Да",
+    "no": "Не",
+    "confirm": "Потврди",
+    "save": "Зачувај",
+    "cancel": "Откажи",
+    "description": "Ознака",
+    "amount": "Вредност",
+    "date": "Датум",
+    "category": "Категорија",
+    "place": "Место",
+    "comment": "Коментар",
+    "deleteConfirmation": "Дали сте сигурни дека сакате да го избришете <strong>{{description}}</strong>?"
+  },
+  "settings": {
+    "label": "Поставки",
+    "login": "Најави се",
+    "register": "Регистрирај се",
+    "logout": "Одјави се"
+  },
+  "home": {
+    "label": {
+      "income": "Приходи",
+      "expense": "Трошоци",
+      "savings": "Заштеда",
+      "futureGoals": "Цели за во иднина",
+      "projection": "Проекција"
+    }
+  },
+  "chart": {
+    "monthlyView": "Месечен преглед"
+  },
+  "incomes": {
+    "label": "Приходи",
+    "add": {
+      "header": {
+        "label": "Додавање на приход"
+      },
+      "label": "Додади нов приход",
+      "success": "Успешно е додадено примањето {{description}}",
+      "fail": "Примањето {{description}} не успеа да се додаде"
+    },
+    "edit": {
+      "header": {
+        "label": "Промена на приход"
+      },
+      "success": "Успешно е променето примањето {{description}}",
+      "fail": "Примањето {{description}} не успеа да се промени"
+    },
+    "delete": {
+      "success": "Успешно е избришано примањето {{description}}",
+      "fail": "Примањето {{description}} не успеа да се избрише"
+    }
+  },
+  "expenses": {
+    "label": "Трошоци",
+    "add": {
+      "header": {
+        "label": "Додавање на трошок"
+      },
+      "label": "Додади нов трошок",
+      "success": "Успешно е додаден трошок {{description}}",
+      "fail": "Трошокот {{description}} не успеа да се додаде"
+    },
+    "edit": {
+      "header": {
+        "label": "Пормена на трошок"
+      },
+      "success": "Успешно е променет трошокот {{description}}",
+      "fail": "Трошокот {{description}} не успеа да се промени"
+    },
+    "delete": {
+      "success": "Успешно е избришан трошокот {{description}}",
+      "fail": "Трошокот {{description}} не успеа да се избрише"
+    }
+  },
+  "goals": {
+    "add": {
+      "header": {
+        "label": "Додавање на цел"
+      },
+      "label": "Додади нова цел",
+      "success": "Успешно е додадена целта {{description}}",
+      "fail": "Целта {{description}} не успеа да се додаде"
+    },
+    "edit": {
+      "header": {
+        "label": "Промена на цел"
+      },
+      "success": "Успешно е променета целта {{description}}",
+      "fail": "Целта {{description}} не успеа да се промени"
+    },
+    "delete": {
+      "success": "Успешно е избришана целта {{description}}",
+      "fail": "Целта {{description}} не успеа да се избрише"
+    }
+  },
+  "months": {
+    "january": "Јануари",
+    "february": "Февруари",
+    "march": "Март",
+    "april": "Април",
+    "may": "Мај",
+    "june": "Јуни",
+    "july": "Јули",
+    "august": "Август",
+    "september": "Септември",
+    "october": "Октомври",
+    "november": "Ноември",
+    "december": "Декември"
+  }
+}

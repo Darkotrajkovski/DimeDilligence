@@ -4,6 +4,17 @@ CREATE TABLE currency
     reference_currency  VARCHAR(5)
 );
 
+CREATE TABLE user_table
+(
+    id                        SERIAL PRIMARY KEY,
+    name                      VARCHAR(50) NOT NULL,
+    surname                   VARCHAR(50) NOT NULL,
+    email                     VARCHAR(50) NOT NULL,
+    password                  VARCHAR(1000) NOT NULL,
+    role                      VARCHAR(10) NOT NULL
+);
+
+
 CREATE TABLE income
 (
     id                        SERIAL PRIMARY KEY,

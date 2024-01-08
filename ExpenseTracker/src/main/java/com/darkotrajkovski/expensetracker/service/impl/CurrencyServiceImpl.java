@@ -1,11 +1,12 @@
 package com.darkotrajkovski.expensetracker.service.impl;
 
 import com.darkotrajkovski.expensetracker.model.Currency;
+import com.darkotrajkovski.expensetracker.model.User;
 import com.darkotrajkovski.expensetracker.repository.CurrencyRepository;
 import com.darkotrajkovski.expensetracker.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,10 +16,10 @@ public class CurrencyServiceImpl implements CurrencyService {
   private final CurrencyRepository currencyRepository;
 
   @Override
-  @Cacheable(value = "referenceCurrency", key = "#ownerId")
   public Currency getReferenceCurrency() {
 
-    return currencyRepository.findByOwnerId(1L);
+    User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    return currencyRepository.findByOwnerId(user.getId());
   }
 
   @Override

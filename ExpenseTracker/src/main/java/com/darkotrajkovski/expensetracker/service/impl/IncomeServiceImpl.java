@@ -1,6 +1,7 @@
 package com.darkotrajkovski.expensetracker.service.impl;
 
 import com.darkotrajkovski.expensetracker.model.Income;
+import com.darkotrajkovski.expensetracker.model.User;
 import com.darkotrajkovski.expensetracker.repository.IncomeRepository;
 import com.darkotrajkovski.expensetracker.service.IncomeService;
 import com.darkotrajkovski.expensetracker.service.mapper.IncomeMapper;
@@ -8,6 +9,7 @@ import com.darkotrajkovski.model.IncomeDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,21 +26,22 @@ public class IncomeServiceImpl implements IncomeService {
 
   @Override
   public List<IncomeDto> getAllIncomes() {
-    if (incomeRepository.findAllByOwnerId(1L).isPresent()) {
-      return incomeMapper.mapListToDto(incomeRepository.findAllByOwnerId(1L).get());
+    User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    if (incomeRepository.findAllByOwnerId(user.getId()).isPresent()) {
+      return incomeMapper.mapListToDto(incomeRepository.findAllByOwnerId(user.getId()).get());
     }
     return new ArrayList<>();
   }
 
   @Override
-  @Cacheable(value = "incomes", key = "#ownerId")
   public List<IncomeDto> getAllIncomesByDate(LocalDate date) {
     return findAllByDateAndOwnerId(date);
   }
 
   @Override
   public List<IncomeDto> getAllIncomesForYear(Integer year) {
-    List<Income> allByDate = incomeRepository.findAllByYearAndOwnerId(year, 1L);
+    User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    List<Income> allByDate = incomeRepository.findAllByYearAndOwnerId(year, user.getId());
     return incomeMapper.mapListToDto(allByDate);
   }
 
@@ -49,7 +52,6 @@ public class IncomeServiceImpl implements IncomeService {
   }
 
   @Override
-  @CacheEvict(value = "incomes", allEntries = true, key = "#ownerId")
   public List<IncomeDto> createIncome(IncomeDto incomeDto) {
     Income income = incomeMapper.mapFromDto(incomeDto);
     incomeRepository.save(income);
@@ -57,7 +59,6 @@ public class IncomeServiceImpl implements IncomeService {
   }
 
   @Override
-  @CacheEvict(value = "incomes", allEntries = true, key = "#ownerId")
   public List<IncomeDto> updateIncome(Long id, IncomeDto incomeDto) {
     Income income = incomeMapper.mapFromDto(incomeDto);
     incomeRepository.save(income);
@@ -65,13 +66,13 @@ public class IncomeServiceImpl implements IncomeService {
   }
 
   @Override
-  @CacheEvict(value = "incomes", allEntries = true, key = "#ownerId")
   public void deleteIncome(Long id) {
     incomeRepository.deleteById(id);
   }
 
   private List<IncomeDto> findAllByDateAndOwnerId(LocalDate date) {
-    List<Income> allByDate = incomeRepository.findAllByDateAndOwnerId(date.getYear(), date.getMonthValue(), 1L);
+    User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    List<Income> allByDate = incomeRepository.findAllByDateAndOwnerId(date.getYear(), date.getMonthValue(), user.getId());
     return incomeMapper.mapListToDto(allByDate);
   }
 }

@@ -1,0 +1,113 @@
+{
+  "common": {
+    "yes": "Ja",
+    "no": "Nein",
+    "confirm": "Bestätigen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "description": "Beschreibung",
+    "amount": "Betrag",
+    "date": "Datum",
+    "category": "Kategorie",
+    "place": "Ort",
+    "comment": "Kommentar",
+    "deleteConfirmation": "Sind Sie sicher, dass Sie <strong>{{description}}</strong> löschen möchten?"
+  },
+  "settings": {
+    "label": "Einstellungen",
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "logout": "Abmelden"
+  },
+  "home": {
+    "label": {
+      "income": "Einkommen",
+      "expense": "Ausgaben",
+      "savings": "Ersparnisse",
+      "futureGoals": "Zukünftige Ziele",
+      "projection": "Prognose"
+    }
+  },
+  "chart": {
+    "monthlyView": "Monatsansicht"
+  },
+  "incomes": {
+    "label": "Einkommen",
+    "add": {
+      "header": {
+        "label": "Ein Einkommen hinzufügen"
+      },
+      "label": "Neues Einkommen hinzufügen",
+      "success": "Einkommen {{description}} erfolgreich hinzugefügt",
+      "fail": "Fehler beim Hinzufügen des Einkommens {{description}}"
+    },
+    "edit": {
+      "header": {
+        "label": "Ein Einkommen bearbeiten"
+      },
+      "success": "Einkommen {{description}} erfolgreich bearbeitet",
+      "fail": "Fehler beim Bearbeiten des Einkommens {{description}}"
+    },
+    "delete": {
+      "success": "Einkommen {{description}} erfolgreich gelöscht",
+      "fail": "Fehler beim Löschen des Einkommens {{description}}"
+    }
+  },
+  "expenses": {
+    "label": "Ausgaben",
+    "add": {
+      "header": {
+        "label": "Eine Ausgabe hinzufügen"
+      },
+      "label": "Neue Ausgabe hinzufügen",
+      "success": "Ausgabe {{description}} erfolgreich hinzugefügt",
+      "fail": "Fehler beim Hinzufügen der Ausgabe {{description}}"
+    },
+    "edit": {
+      "header": {
+        "label": "Eine Ausgabe bearbeiten"
+      },
+      "success": "Ausgabe {{description}} erfolgreich bearbeitet",
+      "fail": "Fehler beim Bearbeiten der Ausgabe {{description}}"
+    },
+    "delete": {
+      "success": "Ausgabe {{description}} erfolgreich gelöscht",
+      "fail": "Fehler beim Löschen der Ausgabe {{description}}"
+    }
+  },
+  "goals": {
+    "add": {
+      "header": {
+        "label": "Ein Ziel hinzufügen"
+      },
+      "label": "Neues Ziel hinzufügen",
+      "success": "Ziel {{description}} erfolgreich hinzugefügt",
+      "fail": "Fehler beim Hinzufügen des Ziels {{description}}"
+    },
+    "edit": {
+      "header": {
+        "label": "Ein Ziel bearbeiten"
+      },
+      "success": "Ziel {{description}} erfolgreich bearbeitet",
+      "fail": "Fehler beim Bearbeiten des Ziels {{description}}"
+    },
+    "delete": {
+      "success": "Ziel {{description}} erfolgreich gelöscht",
+      "fail": "Fehler beim Löschen des Ziels {{description}}"
+    }
+  },
+  "months": {
+    "january": "Januar",
+    "february": "Februar",
+    "march": "März",
+    "april": "April",
+    "may": "Mai",
+    "june": "Juni",
+    "july": "Juli",
+    "august": "August",
+    "september": "September",
+    "october": "Oktober",
+    "november": "November",
+    "december": "Dezember"
+  }
+}

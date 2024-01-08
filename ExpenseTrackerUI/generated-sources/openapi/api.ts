@@ -26,6 +26,56 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError } from './base';
 /**
  * 
  * @export
+ * @interface AuthenticationRequestDto
+ */
+export interface AuthenticationRequestDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthenticationRequestDto
+     */
+    'email'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthenticationRequestDto
+     */
+    'password'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface AuthenticationResponseDto
+ */
+export interface AuthenticationResponseDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthenticationResponseDto
+     */
+    'token'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof AuthenticationResponseDto
+     */
+    'userId'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthenticationResponseDto
+     */
+    'name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthenticationResponseDto
+     */
+    'surname'?: string;
+}
+/**
+ * 
+ * @export
  * @enum {string}
  */
 
@@ -276,6 +326,37 @@ export interface ProjectionDto {
 /**
  * 
  * @export
+ * @interface RegisterRequestDto
+ */
+export interface RegisterRequestDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterRequestDto
+     */
+    'name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterRequestDto
+     */
+    'surname'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterRequestDto
+     */
+    'email'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterRequestDto
+     */
+    'password'?: string;
+}
+/**
+ * 
+ * @export
  * @interface SavingDto
  */
 export interface SavingDto {
@@ -317,6 +398,78 @@ export interface SavingDto {
  */
 export const DefaultApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @summary Authenticate an user
+         * @param {AuthenticationRequestDto} authenticationRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authenticationAuthenticatePost: async (authenticationRequestDto: AuthenticationRequestDto, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'authenticationRequestDto' is not null or undefined
+            assertParamExists('authenticationAuthenticatePost', 'authenticationRequestDto', authenticationRequestDto)
+            const localVarPath = `/authentication/authenticate`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(authenticationRequestDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Register a new user
+         * @param {RegisterRequestDto} registerRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authenticationRegisterPost: async (registerRequestDto: RegisterRequestDto, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'registerRequestDto' is not null or undefined
+            assertParamExists('authenticationRegisterPost', 'registerRequestDto', registerRequestDto)
+            const localVarPath = `/authentication/register`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(registerRequestDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @summary Get all expense records
@@ -953,6 +1106,28 @@ export const DefaultApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @summary Authenticate an user
+         * @param {AuthenticationRequestDto} authenticationRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async authenticationAuthenticatePost(authenticationRequestDto: AuthenticationRequestDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthenticationResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authenticationAuthenticatePost(authenticationRequestDto, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary Register a new user
+         * @param {RegisterRequestDto} registerRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async authenticationRegisterPost(registerRequestDto: RegisterRequestDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthenticationResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authenticationRegisterPost(registerRequestDto, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary Get all expense records
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1161,6 +1336,26 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
     return {
         /**
          * 
+         * @summary Authenticate an user
+         * @param {AuthenticationRequestDto} authenticationRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authenticationAuthenticatePost(authenticationRequestDto: AuthenticationRequestDto, options?: any): AxiosPromise<AuthenticationResponseDto> {
+            return localVarFp.authenticationAuthenticatePost(authenticationRequestDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Register a new user
+         * @param {RegisterRequestDto} registerRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authenticationRegisterPost(registerRequestDto: RegisterRequestDto, options?: any): AxiosPromise<AuthenticationResponseDto> {
+            return localVarFp.authenticationRegisterPost(registerRequestDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Get all expense records
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1350,6 +1545,26 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
 export interface DefaultApiInterface {
     /**
      * 
+     * @summary Authenticate an user
+     * @param {AuthenticationRequestDto} authenticationRequestDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    authenticationAuthenticatePost(authenticationRequestDto: AuthenticationRequestDto, options?: AxiosRequestConfig): AxiosPromise<AuthenticationResponseDto>;
+
+    /**
+     * 
+     * @summary Register a new user
+     * @param {RegisterRequestDto} registerRequestDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    authenticationRegisterPost(registerRequestDto: RegisterRequestDto, options?: AxiosRequestConfig): AxiosPromise<AuthenticationResponseDto>;
+
+    /**
+     * 
      * @summary Get all expense records
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -1537,6 +1752,30 @@ export interface DefaultApiInterface {
  * @extends {BaseAPI}
  */
 export class DefaultApi extends BaseAPI implements DefaultApiInterface {
+    /**
+     * 
+     * @summary Authenticate an user
+     * @param {AuthenticationRequestDto} authenticationRequestDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public authenticationAuthenticatePost(authenticationRequestDto: AuthenticationRequestDto, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).authenticationAuthenticatePost(authenticationRequestDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Register a new user
+     * @param {RegisterRequestDto} registerRequestDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public authenticationRegisterPost(registerRequestDto: RegisterRequestDto, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).authenticationRegisterPost(registerRequestDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @summary Get all expense records

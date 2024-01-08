@@ -5,17 +5,19 @@ import {Button} from "primereact/button";
 import {Tag} from "primereact/tag";
 import ExpenseDialog from "./ExpenseDialog.tsx";
 import {
-  DefaultApi,
   ExpenseDto,
   IncomeDto
-} from "../../generated-sources/openapi";
+} from "../../../generated-sources/openapi";
 import moment from "moment";
 import {Toast} from "primereact/toast";
-import {categoryIcons, getCategoryColor} from "../util.ts";
+import {categoryIcons, getCategoryColor} from "../../util.ts";
 import DeleteExpenseDialog from "./DeleteExpenseDialog.tsx";
 import {Skeleton} from "primereact/skeleton";
 import {Calendar} from "primereact/calendar";
 import ExpensesChartView from "./ExpensesChartView.tsx";
+import {useTranslation} from "react-i18next";
+import useApi from "../../hooks/useApi.ts";
+import {useAuth} from "../../context/AuthContext.tsx";
 
 interface Props {
   isIncome: boolean;
@@ -23,9 +25,11 @@ interface Props {
 
 const Expenses = ({isIncome}: Props) => {
 
+  const { userId } = useAuth();
+
   const emptyExpense: ExpenseDto = {
     id: null,
-    ownerId: 1,
+    ownerId: userId,
     amount: 0,
     currency: 'USD',
     date: moment(new Date()).format('YYYY-MM-DD'),
@@ -46,20 +50,22 @@ const Expenses = ({isIncome}: Props) => {
   const [expense, setExpense] = useState<ExpenseDto>(emptyExpense);
   const toastRef = useRef(null);
 
-  const api = new DefaultApi({
-    basePath: 'http://localhost:8080/v1',
-  });
+  const { t} = useTranslation();
+  const [api, requestConfig] = useApi();
 
   useEffect(() => {
     setLoading(true);
+    if (!api) {
+      return;
+    }
     const formattedDate = moment(date).format('YYYY-MM-DD');
-    const getEntriesCall = isIncome ? api.incomeMonthDateGet(formattedDate) : api.expenseMonthDateGet(formattedDate);
+    const getEntriesCall = isIncome ? api.incomeMonthDateGet(formattedDate, requestConfig) : api.expenseMonthDateGet(formattedDate, requestConfig);
 
     getEntriesCall.then(a => {
       setExpenses(a.data);
       setLoading(false)
     });
-  }, [date]);
+  }, [date, api]);
 
   const formatDate = (date) => {
     return moment(date).format('D MMM YYYY');
@@ -79,7 +85,12 @@ const Expenses = ({isIncome}: Props) => {
     return (
       <div className="col-12">
         <div className="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
-          <img className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" src={categoryIcons(isIncome, _expense.category)} alt={_expense.description} />
+          <img className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" style={{
+            width: '150px',
+            height: '150px',
+            objectFit: 'contain',
+            backgroundColor: 'white'
+          }} src={categoryIcons(isIncome, _expense.category)} alt={_expense.description} />
           <div className="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
             <div className="flex flex-column align-items-center sm:align-items-start gap-3">
               <div className="text-2xl font-bold text-900">{_expense.description}</div>
@@ -113,7 +124,7 @@ const Expenses = ({isIncome}: Props) => {
       <div className="card" key={expense.id}>
         <Toast ref={toastRef}/>
         <Calendar className="mr-2" value={date} onChange={(e) => setDate(e.value)} view="month" dateFormat="M yy" showIcon/>
-        <Button className="mr-2" label="Add a new expense" icon="pi pi-plus" severity="success" onClick={() => setShowAddExpenseDialog(true)}/>
+        <Button className="mr-2" label={isIncome ? t('incomes.add.label') : t('expenses.add.label')} icon="pi pi-plus" severity="success" onClick={() => setShowAddExpenseDialog(true)}/>
         <Button icon="pi pi-chart-pie" onClick={() => setShowChartDialog(true)}/>
         {loading
           ? _.range(5, 10).map(() => <Skeleton className="mt-4" width="100%" height="4rem" />)

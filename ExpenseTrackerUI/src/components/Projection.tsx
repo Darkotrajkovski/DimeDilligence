@@ -2,8 +2,9 @@ import React, {useEffect, useMemo, useState} from "react";
 import {Chart} from "primereact/chart";
 import {Calendar} from "primereact/calendar";
 import {Skeleton} from "primereact/skeleton";
-import {DefaultApi} from "../../generated-sources/openapi";
 import moment from "moment";
+import {useTranslation} from "react-i18next";
+import useApi from "../hooks/useApi.ts";
 
 const Projection = () => {
 
@@ -12,15 +13,17 @@ const Projection = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [date, setDate] = useState<Date>(new Date());
 
-  const api = new DefaultApi({
-    basePath: 'http://localhost:8080/v1',
-  });
+  const { t, i18n} = useTranslation();
+
+  const [api, requestConfig] = useApi();
 
   useEffect(() => {
     setLoading(true);
+    if (!api) {
+      return;
+    }
     const year = moment(date).year();
-    console.log(date, year)
-    api.projectionYearGet(year)
+    api.projectionYearGet(year, requestConfig)
       .then(projection => {
         setIncomes(projection.data.incomes);
         setExpenses(projection.data.expenses);
@@ -28,15 +31,29 @@ const Projection = () => {
       .catch();
 
     setLoading(false);
-  }, [date]);
+  }, [date, api]);
 
   const chartData = useMemo(() => {
     const documentStyle = getComputedStyle(document.documentElement);
+
     return {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      labels: [
+        t('months.january'),
+        t('months.february'),
+        t('months.march'),
+        t('months.april'),
+        t('months.may'),
+        t('months.june'),
+        t('months.july'),
+        t('months.august'),
+        t('months.september'),
+        t('months.october'),
+        t('months.november'),
+        t('months.december'),
+      ],
         datasets: [
       {
-        label: 'Incomes',
+        label: t('incomes.label'),
         fill: false,
         borderColor: documentStyle.getPropertyValue('--blue-500'),
         yAxisID: 'y',
@@ -45,7 +62,7 @@ const Projection = () => {
         data: incomes
       },
       {
-        label: 'Expenses',
+        label: t('expenses.label'),
         fill: false,
         borderColor: documentStyle.getPropertyValue('--red-500'),
         yAxisID: 'y',
@@ -55,7 +72,7 @@ const Projection = () => {
       }
     ]
     }
-  }, [incomes, expenses]);
+  }, [incomes, expenses, i18n.language]);
 
   const chartOptions = {
     stacked: false,

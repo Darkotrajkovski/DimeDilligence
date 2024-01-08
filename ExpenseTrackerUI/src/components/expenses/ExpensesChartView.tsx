@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
-import * as _ from 'lodash'
-import {ExpenseDto} from "../../generated-sources/openapi";
+import * as _ from 'lodash';
+import {ExpenseDto} from "../../../generated-sources/openapi";
 import {Chart} from "primereact/chart";
-import {getCategoryColor} from "../util.ts";
+import {getCategoryColor} from "../../util.ts";
 import {Dialog} from "primereact/dialog";
+import {useTranslation} from "react-i18next";
 
 interface Props {
   isIncome: boolean;
@@ -13,16 +14,14 @@ interface Props {
 
 const ExpensesChartView = ({ isIncome, expenses, handleSetShowChartDialog }: Props) => {
 
+  const { t} = useTranslation();
   const [chartData, setChartData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
 
   useEffect(() => {
     const documentStyle = getComputedStyle(document.documentElement);
-    const expenseCategories = expenses.map(expense => expense.category);
-    console.log(expenses, expenseCategories)
     const groupedByCategory = _.groupBy(expenses, 'category');
     const result = _.mapValues(groupedByCategory, (group) => _.sumBy(group, 'amount'));
-    console.log(result)
     const categories = Object.keys(result);
     const amounts = Object.values(result);
 
@@ -53,7 +52,7 @@ const ExpensesChartView = ({ isIncome, expenses, handleSetShowChartDialog }: Pro
   }, [expenses]);
 
   return (
-    <Dialog visible style={{width: '32rem'}} breakpoints={{'960px': '75vw', '641px': '90vw'}} modal header="Monthty view" onHide={() => handleSetShowChartDialog(false)}>
+    <Dialog visible style={{width: '32rem'}} breakpoints={{'960px': '75vw', '641px': '90vw'}} modal header={t('chart.monthlyView')} onHide={() => handleSetShowChartDialog(false)}>
       <Chart type="pie" data={chartData} options={chartOptions} className="w-full md:w-30rem" />
     </Dialog>
   )

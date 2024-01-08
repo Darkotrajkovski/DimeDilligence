@@ -1,12 +1,14 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {InputNumber, InputNumberChangeEvent} from "primereact/inputnumber";
 import {Dialog} from "primereact/dialog";
 import {Button} from "primereact/button";
 import {Calendar} from "primereact/calendar";
 import {Dropdown} from "primereact/dropdown";
 import {InputText} from "primereact/inputtext";
-import {DefaultApi, GoalsCategoryDto, GoalsDto} from "../../generated-sources/openapi";
-import {goalIcons, showErrorMessage, showSuccessMessage} from "../util.ts";
+import {GoalsCategoryDto, GoalsDto} from "../../../generated-sources/openapi";
+import {goalIcons, showErrorMessage, showSuccessMessage} from "../../util.ts";
+import {useTranslation} from "react-i18next";
+import useApi from "../../hooks/useApi.ts";
 
 interface Props {
   toastRef: any;
@@ -20,7 +22,10 @@ interface Props {
 
 const GoalDialog = ({toastRef, isEditMode, goal, handleSetDefaultGoal, handleSetGoal, handleSetGoals, handleSetShowGoalDialog}: Props) => {
 
+  const { t} = useTranslation();
+  const [api, requestConfig] = useApi();
   const goalCategories = Object.keys(GoalsCategoryDto);
+  const editModeTextKey = isEditMode ? 'edit' : 'add';
 
   const {
     description,
@@ -44,25 +49,18 @@ const GoalDialog = ({toastRef, isEditMode, goal, handleSetDefaultGoal, handleSet
     handleSetGoal(_goal);
   };
 
-  const saveGoal = () => {
-    const api = new DefaultApi({
-      basePath: 'http://localhost:8080/v1',
-    });
+  const saveGoal = useCallback(() => {
 
-    const successMessage = isEditMode ? `Successfully edited goal: ${goal.description}` : `Successfully added goal: ${goal.description}`;
-    const errorMessage = isEditMode ? `Failed to edit goal: ${goal.description}` : `Failed to add goal: ${goal.description}`;
-
-    api.goalsPost(goal)
+    api.goalsPost(goal, requestConfig)
       .then((response) => {
-        console.log(response)
         handleSetGoals(response.data)
-        showSuccessMessage(toastRef, successMessage)
+        showSuccessMessage(toastRef, t(`goals.${editModeTextKey}.success`, { description }))
       })
-      .catch(() => showErrorMessage(toastRef, errorMessage));
+      .catch(() => showErrorMessage(toastRef, t(`goals.${editModeTextKey}.fail`, { description })));
 
       handleSetShowGoalDialog(false);
       handleSetDefaultGoal();
-  };
+  }, [api, goal]);
 
   const closeDialog = () => {
     handleSetDefaultGoal();
@@ -71,8 +69,8 @@ const GoalDialog = ({toastRef, isEditMode, goal, handleSetDefaultGoal, handleSet
 
   const productDialogFooter = (
     <>
-      <Button label="Cancel" icon="pi pi-times" outlined onClick={closeDialog}/>
-      <Button label="Save" icon="pi pi-check" onClick={saveGoal}/>
+      <Button label={t('common.cancel')} icon="pi pi-times" outlined onClick={closeDialog}/>
+      <Button label={t('common.save')} icon="pi pi-check" onClick={saveGoal}/>
     </>
   );
 
@@ -88,14 +86,14 @@ const GoalDialog = ({toastRef, isEditMode, goal, handleSetDefaultGoal, handleSet
   };
 
   return (
-    <Dialog visible style={{width: '32rem'}} breakpoints={{'960px': '75vw', '641px': '90vw'}} header="GoalDetails"
+    <Dialog visible style={{width: '32rem'}} breakpoints={{'960px': '75vw', '641px': '90vw'}} header={t(`goals.${editModeTextKey}.header.label`)}
             modal className="p-fluid" footer={productDialogFooter}
             onHide={closeDialog}
             draggable={false}>
 
       <div className="field">
         <label htmlFor="description" className="font-bold">
-          Description
+          {t('common.description')}
         </label>
         <InputText
           id="description"
@@ -109,7 +107,7 @@ const GoalDialog = ({toastRef, isEditMode, goal, handleSetDefaultGoal, handleSet
       <div className="card flex flex-column md:flex-row gap-3">
         <div className="field">
           <label htmlFor="amount" className="font-bold">
-            Amount
+            {t('common.amount')}
           </label>
           <InputNumber
             id="amount"
@@ -124,7 +122,7 @@ const GoalDialog = ({toastRef, isEditMode, goal, handleSetDefaultGoal, handleSet
 
         <div className="field">
           <label htmlFor="date" className="font-bold">
-            Date
+            {t('common.date')}
           </label>
           <Calendar
             value={new Date(date)}
@@ -138,7 +136,7 @@ const GoalDialog = ({toastRef, isEditMode, goal, handleSetDefaultGoal, handleSet
       <div className="card flex flex-column md:flex-row gap-3 field">
         <div className="field">
           <label htmlFor="category" className="font-bold">
-            Category
+            {t('common.category')}
           </label>
           <Dropdown
             value={category}

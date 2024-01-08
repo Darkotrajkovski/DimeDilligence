@@ -1,11 +1,13 @@
 package com.darkotrajkovski.expensetracker.service.impl;
 
 import com.darkotrajkovski.expensetracker.model.Goal;
+import com.darkotrajkovski.expensetracker.model.User;
 import com.darkotrajkovski.expensetracker.repository.GoalRepository;
 import com.darkotrajkovski.expensetracker.service.GoalsService;
 import com.darkotrajkovski.expensetracker.service.mapper.GoalsMapper;
 import com.darkotrajkovski.model.GoalsDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,7 +23,8 @@ public class GoalsServiceImpl implements GoalsService {
 
   @Override
   public List<GoalsDto> getAllGoals() {
-    Optional<List<Goal>> goals = goalRepository.findAllByOwnerIdOrderByDateDesc(1L);
+    User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Optional<List<Goal>> goals = goalRepository.findAllByOwnerIdOrderByDateDesc(user.getId());
     if (goals.isPresent()) {
       return goalsMapper.mapListToDto(goals.get());
     }

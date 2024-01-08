@@ -1,28 +1,30 @@
 import React, {useState} from "react";
 import {MenuItem} from "primereact/menuitem";
-import Expenses from "./Expenses.tsx";
+import Expenses from "./expenses/Expenses.tsx";
 import {Card} from "primereact/card";
 import {Button} from "primereact/button";
 import Projection from "./Projection.tsx";
-import Goals from "./Goals.tsx";
+import Goals from "./goals/Goals.tsx";
+import SettingsDialog from "./settings/SettingsDialog.tsx";
+import {useTranslation} from "react-i18next";
 
 const INCOME = 'INCOME';
 const EXPENSE = 'EXPENSE';
-const SAVINGS = 'SAVINGS';
 const FUTURE_GOALS = 'FUTURE_GOALS';
 const PROJECTION = 'PROJECTION';
 
 const Home = () => {
 
-  const items: MenuItem[] = [
-    {id: INCOME, label: 'Incomes', icon: 'src/assets/income.svg'},
-    {id: EXPENSE, label: 'Expenses', icon: 'src/assets/expense.svg'},
-    {id: SAVINGS, label: 'Savings', icon: 'src/assets/piggyBank.png'},
-    {id: FUTURE_GOALS, label: 'Future goals', icon: 'src/assets/futureGoals.png'},
-    {id: PROJECTION, label: 'Projection', icon: 'src/assets/projection.png'},
-  ];
+  const { t } = useTranslation();
+  const [selectedTab, setSelectedTab] = useState(INCOME);
+  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
 
-  const [selectedTab, setSelectedTab] = useState(EXPENSE);
+  const items: MenuItem[] = [
+    {id: INCOME, label: t('home.label.income'), icon: 'src/assets/income.svg'},
+    {id: EXPENSE, label: t('home.label.expense'), icon: 'src/assets/expense.svg'},
+    {id: FUTURE_GOALS, label: t('home.label.futureGoals'), icon: 'src/assets/futureGoals.png'},
+    {id: PROJECTION, label: t('home.label.projection'), icon: 'src/assets/projection.png'},
+  ];
 
   const findSelectedItem = () => items.find(item => item.id === selectedTab);
 
@@ -41,7 +43,10 @@ const Home = () => {
               outlined
               size="large"
               className="md:m-1 w-full"
-              />)}
+              />
+            )
+          }
+          <Button onClick={() => setShowSettingsDialog(true)} icon="pi pi-cog" className="md:m-1" />
         </Card>
         <Card className="w-9 h-full">
           {selectedTab === INCOME && <Expenses isIncome />}
@@ -49,6 +54,8 @@ const Home = () => {
           {selectedTab === PROJECTION && <Projection />}
           {selectedTab === FUTURE_GOALS && <Goals />}
         </Card>
+
+        {showSettingsDialog && <SettingsDialog handleSetShowSettingsDialog={setShowSettingsDialog} />}
     </div>
   )
 

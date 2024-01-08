@@ -1,12 +1,14 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {InputNumber, InputNumberChangeEvent} from "primereact/inputnumber";
 import {Dialog} from "primereact/dialog";
 import {Button} from "primereact/button";
 import {Calendar} from "primereact/calendar";
 import {Dropdown} from "primereact/dropdown";
 import {InputText} from "primereact/inputtext";
-import {DefaultApi, ExpenseCategoryDto, ExpenseDto, IncomeCategoryDto} from "../../generated-sources/openapi";
-import {categoryIcons, showErrorMessage, showSuccessMessage} from "../util.ts";
+import {ExpenseCategoryDto, ExpenseDto, IncomeCategoryDto} from "../../../generated-sources/openapi";
+import {categoryIcons, showErrorMessage, showSuccessMessage} from "../../util.ts";
+import {useTranslation} from "react-i18next";
+import useApi from "../../hooks/useApi.ts";
 
 interface Props {
   toastRef: any;
@@ -19,10 +21,25 @@ interface Props {
   handleSetShowExpenseDialog: Function;
 }
 
-const ExpenseDialog = ({toastRef, isIncome, isEditMode, expense, handleSetDefaultExpense, handleSetExpense, handleSetExpenses, handleSetShowExpenseDialog}: Props) => {
+const ExpenseDialog = ({
+                         toastRef,
+                         isIncome,
+                         isEditMode,
+                         expense,
+                         handleSetDefaultExpense,
+                         handleSetExpense,
+                         handleSetExpenses,
+                         handleSetShowExpenseDialog
+                       }: Props) => {
+
+  const {t} = useTranslation();
+  const [api, requestConfig] = useApi();
 
   const expenseCategories = Object.keys(ExpenseCategoryDto);
   const incomeCategories = Object.keys(IncomeCategoryDto)
+
+  const prefix = isIncome ? 'incomes' : 'expenses';
+  const editModeTextKey = isEditMode ? 'edit' : 'add';
 
   const {
     description,
@@ -48,27 +65,20 @@ const ExpenseDialog = ({toastRef, isIncome, isEditMode, expense, handleSetDefaul
     handleSetExpense(_expense);
   };
 
-  const saveExpense = () => {
-    const api = new DefaultApi({
-      basePath: 'http://localhost:8080/v1',
-    });
+  const saveExpense = useCallback(() => {
 
-    const successMessage = isEditMode ? `Successfully edited expense: ${expense.description}` : `Successfully added expense: ${expense.description}`;
-    const errorMessage = isEditMode ? `Failed to edit expense: ${expense.description}` : `Failed to add expense: ${expense.description}`;
-
-    const createEntryCall = isIncome ? api.incomePost(expense) : api.expensePost(expense);
+    const createEntryCall = isIncome ? api.incomePost(expense, requestConfig) : api.expensePost(expense, requestConfig);
 
     createEntryCall
       .then((response) => {
         handleSetExpenses(response.data)
-        showSuccessMessage(toastRef, successMessage)
+        showSuccessMessage(toastRef, t(`${prefix}.${editModeTextKey}.success`, {description: expense.description}))
       })
-      .catch(() => showErrorMessage(toastRef, errorMessage));
+      .catch(() => showErrorMessage(toastRef, t(`${prefix}.${editModeTextKey}.fail`, {description: expense.description})));
 
-      handleSetShowExpenseDialog(false);
-      handleSetDefaultExpense();
-
-  };
+    handleSetShowExpenseDialog(false);
+    handleSetDefaultExpense();
+  }, [api, expense]);
 
   const closeDialog = () => {
     handleSetDefaultExpense();
@@ -77,8 +87,8 @@ const ExpenseDialog = ({toastRef, isIncome, isEditMode, expense, handleSetDefaul
 
   const productDialogFooter = (
     <>
-      <Button label="Cancel" icon="pi pi-times" outlined onClick={closeDialog}/>
-      <Button label="Save" icon="pi pi-check" onClick={saveExpense}/>
+      <Button label={t('common.cancel')} icon="pi pi-times" outlined onClick={closeDialog}/>
+      <Button label={t('common.save')} icon="pi pi-check" onClick={saveExpense}/>
     </>
   );
 
@@ -87,21 +97,22 @@ const ExpenseDialog = ({toastRef, isIncome, isEditMode, expense, handleSetDefaul
 
     return (
       <div className="flex align-items-center">
-        <img alt={name} src={icon} className={`mr-2`} style={{ width: '18px' }} />
+        <img alt={name} src={icon} className={`mr-2`} style={{width: '18px'}}/>
         <div>{name}</div>
       </div>
     );
   };
 
   return (
-    <Dialog visible style={{width: '32rem'}} breakpoints={{'960px': '75vw', '641px': '90vw'}} header="Expense Details"
+    <Dialog visible style={{width: '32rem'}} breakpoints={{'960px': '75vw', '641px': '90vw'}}
+            header={t(`${prefix}.${editModeTextKey}.header.label`)}
             modal className="p-fluid" footer={productDialogFooter}
             onHide={closeDialog}
             draggable={false}>
 
       <div className="field">
         <label htmlFor="description" className="font-bold">
-          Description
+          {t('common.description')}
         </label>
         <InputText
           id="description"
@@ -115,7 +126,7 @@ const ExpenseDialog = ({toastRef, isIncome, isEditMode, expense, handleSetDefaul
       <div className="card flex flex-column md:flex-row gap-3">
         <div className="field">
           <label htmlFor="amount" className="font-bold">
-            Amount
+            {t('common.amount')}
           </label>
           <InputNumber
             id="amount"
@@ -130,7 +141,7 @@ const ExpenseDialog = ({toastRef, isIncome, isEditMode, expense, handleSetDefaul
 
         <div className="field">
           <label htmlFor="date" className="font-bold">
-            Date
+            {t('common.date')}
           </label>
           <Calendar
             value={new Date(date)}
@@ -144,7 +155,7 @@ const ExpenseDialog = ({toastRef, isIncome, isEditMode, expense, handleSetDefaul
       <div className="card flex flex-column md:flex-row gap-3 field">
         <div className="field">
           <label htmlFor="category" className="font-bold">
-            Category
+            {t('common.category')}
           </label>
           <Dropdown
             value={category}
@@ -157,7 +168,7 @@ const ExpenseDialog = ({toastRef, isIncome, isEditMode, expense, handleSetDefaul
 
         <div className="field">
           <label htmlFor="place" className="font-bold">
-            Place
+            {t('common.place')}
           </label>
           <InputText
             id="place"
@@ -169,7 +180,7 @@ const ExpenseDialog = ({toastRef, isIncome, isEditMode, expense, handleSetDefaul
 
       <div className="field">
         <label htmlFor="comment" className="font-bold">
-          Comment
+          {t('common.comment')}
         </label>
         <InputText
           id="comment"

@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.darkotrajkovski.expensetracker.model.Income;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import com.darkotrajkovski.expensetracker.model.User;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.darkotrajkovski.expensetracker.model.Expense;
@@ -27,7 +26,8 @@ public class ExpenseServiceImpl implements ExpenseService {
 
   @Override
   public List<ExpenseDto> getAllExpenses() {
-    Optional<List<Expense>> expenses = expenseRepository.findAllByOwnerIdOrderByDateDesc(1L);
+    User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Optional<List<Expense>> expenses = expenseRepository.findAllByOwnerIdOrderByDateDesc(user.getId());
     if (expenses.isPresent()) {
       return expenseMapper.mapListToDto(expenses.get());
     }
@@ -35,14 +35,14 @@ public class ExpenseServiceImpl implements ExpenseService {
   }
 
   @Override
-  @Cacheable(value = "expenses", key = "#ownerId")
   public List<ExpenseDto> getAllExpensesByDate(LocalDate date) {
     return findAllByDateAndOwnerId(date);
   }
 
   @Override
   public List<ExpenseDto> getAllExpensesForYear(Integer year) {
-    List<Expense> allByDate = expenseRepository.findAllByYearAndOwnerId(year, 1L);
+    User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    List<Expense> allByDate = expenseRepository.findAllByYearAndOwnerId(year, user.getId());
     return expenseMapper.mapListToDto(allByDate);
   }
 
@@ -53,7 +53,6 @@ public class ExpenseServiceImpl implements ExpenseService {
   }
 
   @Override
-  @CacheEvict(value = "expenses", allEntries = true, key = "#ownerId")
   public List<ExpenseDto> createExpense(ExpenseDto expenseDto) {
     Expense expense = expenseMapper.mapFromDto(expenseDto);
     expenseRepository.save(expense);
@@ -61,7 +60,6 @@ public class ExpenseServiceImpl implements ExpenseService {
   }
 
   @Override
-  @CacheEvict(value = "expenses", allEntries = true, key = "#ownerId")
   public List<ExpenseDto> updateExpense(Long id, ExpenseDto expenseDto) {
     Expense expense = expenseMapper.mapFromDto(expenseDto);
     expenseRepository.save(expense);
@@ -69,13 +67,14 @@ public class ExpenseServiceImpl implements ExpenseService {
   }
 
   @Override
-  @CacheEvict(value = "expenses", allEntries = true, key = "#ownerId")
   public void deleteExpense(Long id) {
     expenseRepository.deleteById(id);
   }
 
   private List<ExpenseDto> findAllByDateAndOwnerId(LocalDate date) {
-    List<Expense> allByDate = expenseRepository.findAllByDateAndOwnerId(date.getYear(), date.getMonthValue(), 1L);
+    User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    List<Expense> allByDate = expenseRepository.findAllByDateAndOwnerId(date.getYear(), date.getMonthValue(), user.getId());
     return expenseMapper.mapListToDto(allByDate);
   }
 }

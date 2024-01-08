@@ -1,0 +1,113 @@
+{
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "save": "Save",
+    "cancel": "Cancel",
+    "description": "Description",
+    "amount": "Amount",
+    "date": "Date",
+    "category": "Category",
+    "place": "Place",
+    "comment": "Comment",
+    "deleteConfirmation": "Are you sure that you want to delete <strong>{{description}}</strong>?"
+  },
+  "settings": {
+    "label": "Settings",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "home": {
+    "label": {
+      "income": "Income",
+      "expense": "Expense",
+      "savings": "Savings",
+      "futureGoals": "Future goals",
+      "projection": "Projection"
+    }
+  },
+  "chart": {
+    "monthlyView": "Monthly view"
+  },
+  "incomes": {
+    "label": "Incomes",
+    "add": {
+      "header": {
+        "label": "Adding an income"
+      },
+      "label": "Add new income",
+      "success": "Successfully added income {{description}}",
+      "fail": "Failed to add income {{description}}"
+    },
+    "edit": {
+      "header": {
+        "label": "Editing an income"
+      },
+      "success": "Successfully edited income {{description}}",
+      "fail": "Failed to edit income {{description}}"
+    },
+    "delete": {
+      "success": "Successfully deleted income {{description}}",
+      "fail": "Failed to delete income {{description}}"
+    }
+  },
+  "expenses": {
+    "label": "Expenses",
+    "add": {
+      "header": {
+        "label": "Adding an expense"
+      },
+      "label": "Add new expense",
+      "success": "Successfully added expense {{description}}",
+      "fail": "Failed to add expense {{description}}"
+    },
+    "edit": {
+      "header": {
+        "label": "Editing an expense"
+      },
+      "success": "Successfully edited expense {{description}}",
+      "fail": "Failed to edit expense {{description}}"
+    },
+    "delete": {
+      "success": "Successfully deleted expense {{description}}",
+      "fail": "Failed to delete expense {{description}}"
+    }
+  },
+  "goals": {
+    "add": {
+      "header": {
+        "label": "Adding a goal"
+      },
+      "label": "Add new goal",
+      "success": "Successfully added goal {{description}}",
+      "fail": "Failed to add goal {{description}}"
+    },
+    "edit": {
+      "header": {
+        "label": "Editing a goal"
+      },
+      "success": "Successfully edited goal {{description}}",
+      "fail": "Failed to edit goal {{description}}"
+    },
+    "delete": {
+      "success": "Successfully deleted goal {{description}}",
+      "fail": "Failed to delete goal {{description}}"
+    }
+  },
+  "months": {
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December"
+  }
+}

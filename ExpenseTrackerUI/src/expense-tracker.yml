@@ -5,6 +5,38 @@ info:
 servers:
   - url: api/v1
 paths:
+  /authentication/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequestDto'
+      responses:
+        '201':
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponseDto'
+  /authentication/authenticate:
+    post:
+      summary: Authenticate an user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequestDto'
+      responses:
+        '201':
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponseDto'
   /income:
     get:
       summary: Get all income records
@@ -320,6 +352,36 @@ paths:
           description: Successfully deleted
 components:
   schemas:
+    RegisterRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    AuthenticationRequestDto:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    AuthenticationResponseDto:
+      type: object
+      properties:
+        token:
+          type: string
+        userId:
+          type: integer
+          format: int64
+        name:
+          type: string
+        surname:
+          type: string
     IncomeDto:
       type: object
       properties:
@@ -448,3 +510,9 @@ components:
         - TechnologyAndGadgets
         - Charity
         - Hobbies
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
