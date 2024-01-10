@@ -1122,7 +1122,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authenticationRegisterPost(registerRequestDto: RegisterRequestDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthenticationResponseDto>> {
+        async authenticationRegisterPost(registerRequestDto: RegisterRequestDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.authenticationRegisterPost(registerRequestDto, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1351,7 +1351,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authenticationRegisterPost(registerRequestDto: RegisterRequestDto, options?: any): AxiosPromise<AuthenticationResponseDto> {
+        authenticationRegisterPost(registerRequestDto: RegisterRequestDto, options?: any): AxiosPromise<void> {
             return localVarFp.authenticationRegisterPost(registerRequestDto, options).then((request) => request(axios, basePath));
         },
         /**
@@ -1561,7 +1561,7 @@ export interface DefaultApiInterface {
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    authenticationRegisterPost(registerRequestDto: RegisterRequestDto, options?: AxiosRequestConfig): AxiosPromise<AuthenticationResponseDto>;
+    authenticationRegisterPost(registerRequestDto: RegisterRequestDto, options?: AxiosRequestConfig): AxiosPromise<void>;
 
     /**
      * 

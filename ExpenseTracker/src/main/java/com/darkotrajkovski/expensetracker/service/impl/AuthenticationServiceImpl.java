@@ -9,10 +9,13 @@ import com.darkotrajkovski.model.AuthenticationRequestDto;
 import com.darkotrajkovski.model.AuthenticationResponseDto;
 import com.darkotrajkovski.model.RegisterRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +37,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   @Override
-  public AuthenticationResponseDto register(RegisterRequestDto registerRequestDto) {
+  public HttpStatus register(RegisterRequestDto registerRequestDto) {
+    Optional<User> existingUser = userRepository.findByEmail(registerRequestDto.getEmail());
+
+    if (existingUser.isPresent()) {
+      return HttpStatus.FOUND;
+    }
+
     User user = new User();
     user.setName(registerRequestDto.getEmail());
     user.setSurname(registerRequestDto.getSurname());
@@ -43,7 +52,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     user.setRole(Role.USER);
 
     userRepository.save(user);
-    return getAuthenticationResponseDto(user);
+
+    return HttpStatus.CREATED;
   }
 
   private AuthenticationResponseDto getAuthenticationResponseDto(User user) {

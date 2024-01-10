@@ -6,6 +6,7 @@ import com.darkotrajkovski.model.AuthenticationRequestDto;
 import com.darkotrajkovski.model.AuthenticationResponseDto;
 import com.darkotrajkovski.model.RegisterRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,8 @@ public class AuthenticationController implements AuthenticationApi {
   }
 
   @Override
-  public ResponseEntity<AuthenticationResponseDto> authenticationRegisterPost(RegisterRequestDto registerRequestDto) {
-    return ResponseEntity.ok(authenticationService.register(registerRequestDto));
+  public ResponseEntity<Void> authenticationRegisterPost(RegisterRequestDto registerRequestDto) throws Exception {
+    HttpStatus registerStatus = authenticationService.register(registerRequestDto);
+    return ResponseEntity.status(registerStatus).build();
   }
 }

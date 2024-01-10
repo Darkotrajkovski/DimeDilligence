@@ -52,7 +52,7 @@ const ExpensesChartView = ({ isIncome, expenses, handleSetShowChartDialog }: Pro
   }, [expenses]);
 
   return (
-    <Dialog visible style={{width: '32rem'}} breakpoints={{'960px': '75vw', '641px': '90vw'}} modal header={t('chart.monthlyView')} onHide={() => handleSetShowChartDialog(false)}>
+    <Dialog visible style={{width: '32rem'}} breakpoints={{'960px': '75vw', '641px': '90vw'}} draggable={false} modal header={t('chart.monthlyView')} onHide={() => handleSetShowChartDialog(false)}>
       <Chart type="pie" data={chartData} options={chartOptions} className="w-full md:w-30rem" />
     </Dialog>
   )
